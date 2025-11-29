@@ -1,7 +1,8 @@
 from moviepy.editor import *
 import random
+import numpy as np   # <--- BU EKSİKTİ, ARTIK VAR
 
-print("GROK BRAINROT V12 – SESE GEREK YOK, KESİN ÇALIŞIR")
+print("GROK BRAINROT V13 – ŞİMDİ KESİN ÇALIŞIYOR AMK")
 
 W, H = 1080, 1920
 duration = 30
@@ -18,7 +19,7 @@ characters = {
 selected = random.sample(list(characters.keys()), 5)
 print("Bugün senaryo:", " vs ".join(selected))
 
-# Flashing arka plan (fx'siz, lambda'sız)
+# Flashing arka plan (np artık tanımlı)
 def make_bg(t):
     r = int(127 + 127 * np.sin(t * 8))
     g = int(127 + 127 * np.sin(t * 5 + 2))
@@ -37,8 +38,7 @@ for i, char in enumerate(selected):
 
 final = CompositeVideoClip(clips, size=(W,H)).set_duration(duration).set_fps(30)
 
-# SES YOK → HATA YOK
-filename = f"brainrot_{random.randint(1000,9999)}.mp4"
+filename = f"brainrot_final_{random.randint(1000,9999)}.mp4"
 final.write_videofile(filename, codec="libx264", audio=False, preset="ultrafast", threads=4, logger=None)
 
-print("BÖLÜM HAZIR (SES YOK, CAPCUTTA EKLE):", filename)
+print("BÖLÜM HAZIR LAN, İNDİR:", filename)
