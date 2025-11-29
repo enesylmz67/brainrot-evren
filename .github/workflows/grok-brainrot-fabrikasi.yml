@@ -3,7 +3,7 @@ name: Grok Brainrot Fabrikası
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 6 * * *'  # Her gün sabah 09:00 Türkiye saati
 
 jobs:
   build:
@@ -15,9 +15,10 @@ jobs:
           python-version: '3.11'
       - name: FFmpeg ve ImageMagick kur
         run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg imagemagick
-      - name: ImageMagick policy ayarla (MoviePy için)
+      - name: ImageMagick policy düzelt (MoviePy TextClip için)
         run: |
           sudo sed -i 's/<policy domain="path" rights="none" pattern="@\*"/<policy domain="path" rights="read|write" pattern="@\*"/g' /etc/ImageMagick-6/policy.xml
+          sudo sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>/<policy domain="coder" rights="read|write" pattern="PDF" \/>/g' /etc/ImageMagick-6/policy.xml
       - run: |
           python3.11 -m pip install --upgrade pip
           python3.11 -m pip install moviepy==1.0.3 numpy imageio-ffmpeg --force-reinstall
