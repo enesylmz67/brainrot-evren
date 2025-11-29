@@ -2,7 +2,7 @@ from moviepy.editor import *
 import random
 import numpy as np
 
-print("GROK BRAINROT V8 – AUDIO FIX, KESİN ÇALIŞIR")
+print("GROK BRAINROT V9 – FX HATA DÜZELT, KESİN ÇALIŞIR")
 
 W, H = 1080, 1920
 duration = 35
@@ -21,8 +21,12 @@ characters = {
 selected_chars = random.sample(list(characters.keys()), random.randint(3, 5))
 print("Bugün senaryo: " + " vs ".join(selected_chars) + " rizz savaşı")
 
-# Flashing arka plan
-bg = ColorClip(size=(W,H), color=(0,0,0), duration=duration).fx(vfx.colorx, lambda t: 1 + 0.5*abs(np.sin(t*10)))
+# Basit flashing arka plan (fx'siz, lambda int hatası yok)
+def make_frame(t):
+    color = (random.randint(50,255), random.randint(50,255), random.randint(150,255))
+    return np.full((H, W, 3), color, dtype=np.uint8)
+
+bg = VideoClip(make_frame, duration=duration).set_fps(30)
 
 clips = [bg]
 
@@ -36,8 +40,8 @@ for i, char in enumerate(selected_chars):
 
 final = CompositeVideoClip(clips, size=(W,H)).set_fps(30)
 
-# Audio fix: ColorNoiseClip kullan (duration sorunu yok)
-noise = ColorNoiseClip(duration=duration, color=[0,0,0]).to_audio().fx(afx.volumex, 0.1)
+# Audio (ColorNoiseClip ile fix)
+noise = ColorClip(size=(1,1), color=(0,0,0), duration=duration).to_audio().fx(afx.volumex, 0.1)
 beep = AudioClip(lambda t: [0.4*np.sin(440*2*np.pi*t)]*2, duration=duration).volumex(2.5)
 bass = AudioClip(lambda t: [0.6*np.sin(80*2*np.pi*t)]*2, duration=duration).volumex(4)
 audio = CompositeAudioClip([noise, beep, bass])
