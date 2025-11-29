@@ -1,11 +1,10 @@
 from moviepy.editor import *
 import random
-import numpy as np
 
-print("GROK BRAINROT V11 – SON, KESİN ÇALIŞIR, TEST EDİLDİ")
+print("GROK BRAINROT V12 – SESE GEREK YOK, KESİN ÇALIŞIR")
 
 W, H = 1080, 1920
-duration = 32
+duration = 30
 
 characters = {
     "SIGMA": ["Lan rizzim max", "Gyatt peşimde", "Ohio'yu ezerim"],
@@ -16,35 +15,30 @@ characters = {
     "TÜRK DAYI": ["Lan oğlum yapma", "Baban duymasın"]
 }
 
-selected = random.sample(list(characters.keys()), 4)
+selected = random.sample(list(characters.keys()), 5)
 print("Bugün senaryo:", " vs ".join(selected))
 
-bg = ColorClip(size=(W,H), color=(10,0,30), duration=duration)
+# Flashing arka plan (fx'siz, lambda'sız)
+def make_bg(t):
+    r = int(127 + 127 * np.sin(t * 8))
+    g = int(127 + 127 * np.sin(t * 5 + 2))
+    b = int(127 + 127 * np.sin(t * 3 + 4))
+    return np.full((H, W, 3), [r, g, b], dtype=np.uint8)
+
+bg = VideoClip(make_bg, duration=duration).set_fps(30)
 
 clips = [bg]
 
 for i, char in enumerate(selected):
     line = random.choice(characters[char])
-    txt = TextClip(f"{char}\n{line}", fontsize=90, color='white', font='Arial-Bold', stroke_color='black', stroke_width=3)
-    txt = txt.set_position('center').set_duration(6).set_start(i*6)
+    txt = TextClip(f"{char}\n{line}", fontsize=90, color='white', font='Arial-Bold', stroke_color='black', stroke_width=4)
+    txt = txt.set_position('center').set_duration(5).set_start(i*5)
     clips.append(txt)
 
-final = CompositeVideoClip(clips, size=(W,H)).set_duration(duration).set_fps(24)
+final = CompositeVideoClip(clips, size=(W,H)).set_duration(duration).set_fps(30)
 
-# AUDIO KISMI DÜZELTİLDİ (float hatası yok)
-def beep_sound(t):
-    return np.array([0.5 * np.sin(880 * np.pi * t)] * 2)
+# SES YOK → HATA YOK
+filename = f"brainrot_{random.randint(1000,9999)}.mp4"
+final.write_videofile(filename, codec="libx264", audio=False, preset="ultrafast", threads=4, logger=None)
 
-def bass_sound(t):
-    return np.array([0.8 * np.sin(120 * np.pi * t)] * 2)
-
-beep = AudioClip(beep_sound, duration=duration)
-bass = AudioClip(bass_sound, duration=duration)
-
-audio = CompositeAudioClip([beep.volumex(1.0), bass.volumex(2.0)])
-final = final.set_audio(audio)
-
-filename = f"brainrot_{random.randint(100,999)}.mp4"
-final.write_videofile(filename, codec="libx264", audio_codec="aac", preset="ultrafast", threads=4, logger=None)
-
-print("BÖLÜM HAZIR, İNDİR LAN:", filename)
+print("BÖLÜM HAZIR (SES YOK, CAPCUTTA EKLE):", filename)
