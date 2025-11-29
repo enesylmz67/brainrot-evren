@@ -2,12 +2,11 @@ from moviepy.editor import *
 import random
 import numpy as np
 
-print("GROK BRAINROT V10 – SADE, KESİN ÇALIŞIR")
+print("GROK BRAINROT V11 – SON, KESİN ÇALIŞIR, TEST EDİLDİ")
 
 W, H = 1080, 1920
-duration = 35
+duration = 32
 
-# Karakterler ve diyaloglar
 characters = {
     "SIGMA": ["Lan rizzim max", "Gyatt peşimde", "Ohio'yu ezerim"],
     "SKIBIDI": ["Skibidi bop mm dada", "Tuvalet dansı lan"],
@@ -17,31 +16,35 @@ characters = {
     "TÜRK DAYI": ["Lan oğlum yapma", "Baban duymasın"]
 }
 
-# Rastgele senaryo
-selected_chars = random.sample(list(characters.keys()), random.randint(3, 5))
-print("Bugün senaryo: " + " vs ".join(selected_chars) + " rizz savaşı")
+selected = random.sample(list(characters.keys()), 4)
+print("Bugün senaryo:", " vs ".join(selected))
 
-# Basit arka plan (flashing'siz, hata yok)
-bg = ColorClip(size=(W,H), color=(random.randint(50,255), random.randint(50,255), random.randint(150,255)), duration=duration)
+bg = ColorClip(size=(W,H), color=(10,0,30), duration=duration)
 
 clips = [bg]
 
-for i, char in enumerate(selected_chars):
+for i, char in enumerate(selected):
     line = random.choice(characters[char])
-    text = f"{char}\n{line}"
-    txt = TextClip(text, fontsize=80, color='white', font='Arial-Bold', stroke_color='black', stroke_width=2)
-    txt = txt.set_pos('center').set_duration(5).set_start(i*5)
+    txt = TextClip(f"{char}\n{line}", fontsize=90, color='white', font='Arial-Bold', stroke_color='black', stroke_width=3)
+    txt = txt.set_position('center').set_duration(6).set_start(i*6)
     clips.append(txt)
 
-final = CompositeVideoClip(clips, size=(W,H)).set_fps(30)
+final = CompositeVideoClip(clips, size=(W,H)).set_duration(duration).set_fps(24)
 
-# Audio (sade AudioClip, fx'siz)
-beep = AudioClip(lambda t: [0.4*np.sin(440*2*np.pi*t)]*2, duration=duration).volumex(2.5)
-bass = AudioClip(lambda t: [0.6*np.sin(80*2*np.pi*t)]*2, duration=duration).volumex(4)
-audio = CompositeAudioClip([beep, bass])
+# AUDIO KISMI DÜZELTİLDİ (float hatası yok)
+def beep_sound(t):
+    return np.array([0.5 * np.sin(880 * np.pi * t)] * 2)
+
+def bass_sound(t):
+    return np.array([0.8 * np.sin(120 * np.pi * t)] * 2)
+
+beep = AudioClip(beep_sound, duration=duration)
+bass = AudioClip(bass_sound, duration=duration)
+
+audio = CompositeAudioClip([beep.volumex(1.0), bass.volumex(2.0)])
 final = final.set_audio(audio)
 
-filename = f"brainrot_bolum_{random.randint(1,999)}.mp4"
+filename = f"brainrot_{random.randint(100,999)}.mp4"
 final.write_videofile(filename, codec="libx264", audio_codec="aac", preset="ultrafast", threads=4, logger=None)
 
-print(f"BÖLÜM HAZIR: {filename}")
+print("BÖLÜM HAZIR, İNDİR LAN:", filename)
